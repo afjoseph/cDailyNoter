@@ -144,7 +144,7 @@ fetch_template_data(char **out, const char const *path) {
     const int template_size = 1000;
     char *buffer = alloca(template_size);
 
-    len += snprintf(buffer+len, template_size-len, "%s\n", formatted_dates);
+    len += snprintf(buffer+len, template_size-len, "%s\n", formatted_dates[0]);
     len += snprintf(buffer+len, template_size-len, "\n");
     len += snprintf(buffer+len, template_size-len, "# Tasks\n");
     len += snprintf(buffer+len, template_size-len, "\n");
