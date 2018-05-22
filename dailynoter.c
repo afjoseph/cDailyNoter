@@ -7,15 +7,16 @@
 #include <sys/wait.h>
 
 #define EDITOR "/usr/bin/nvim"
+#define JOURNAL_DIR "journal"
 #define NUM_OF_DAYS 3
-#define PATH_SIZE 256
+#define PATH_SIZE 512
 
 char **formatted_dates;
 
 void fetch_dates();
 void open_files(const char **);
 void create_file(const char **);
-void fetch_template_data(char **, const char const*);
+void fetch_template_data(char **, const char *);
 
 /**
  * - Get env variable
@@ -25,42 +26,43 @@ void fetch_template_data(char **, const char const*);
  * - If not, format it
  */
 int 
-main(int argc, char *argv[]) {
+main() {
     int i;
-    time_t t;
-    struct tm *tmp;
-    char **note_paths;
+    char **file_paths;
     const int path_size = PATH_SIZE;
 
-
     // Get env variable
-    const char* journal_path = getenv("JOURNAL_DIR");
-    if (journal_path == NULL) {
+    const char* notes_dir_path = getenv("NOTES_DIR");
+    if (notes_dir_path == NULL) {
         perror("getenv");
         exit(-1);
     }
 
     fetch_dates();
 
-    note_paths = malloc(NUM_OF_DAYS * sizeof(char *));
+    // cd into dir to allow vim to fuzzy search notes directory
+    chdir(notes_dir_path);
+
+    // Get file paths
+    file_paths = malloc(NUM_OF_DAYS * sizeof(char *));
     for (i = 0; i < NUM_OF_DAYS; i++) {
-        note_paths[i] = malloc(path_size * sizeof(char));
-        snprintf(note_paths[i], path_size, 
-                "%s/%s.md", journal_path, formatted_dates[i]);
+        file_paths[i] = malloc(path_size * sizeof(char));
+        snprintf(file_paths[i], path_size, 
+                "%s/%s/%s.md", notes_dir_path, JOURNAL_DIR, formatted_dates[i]);
     }
 
-    if (access(note_paths[0], F_OK) != -1) {
-        open_files((const char **)note_paths);
+    if (access(file_paths[0], F_OK) != -1) {
+        open_files((const char **)file_paths);
     } else {
-        create_file((const char **)note_paths);
+        create_file((const char **)file_paths);
     }
 
 
     for (i = 0; i < NUM_OF_DAYS; i++) {
-        free(note_paths[i]);
+        free(file_paths[i]);
         free(formatted_dates[i]);
     }
-    free(note_paths);
+    free(file_paths);
     free(formatted_dates);
 }
 
@@ -103,7 +105,6 @@ open_files(const char **paths) {
 void 
 create_file(const char **paths) {
     FILE *file;
-    int i;
     char *buffer;
 
     if ((file = fopen(paths[0], "w")) == NULL) {
@@ -139,15 +140,14 @@ fetch_dates() {
 }
 
 void 
-fetch_template_data(char **out, const char const *path) {
-    int i, len = 0;
+fetch_template_data(char **out, const char *path) {
+    int len = 0;
     const int template_size = 1000;
     char *buffer = alloca(template_size);
 
     len += snprintf(buffer+len, template_size-len, "%s\n", formatted_dates[0]);
     len += snprintf(buffer+len, template_size-len, "\n");
     len += snprintf(buffer+len, template_size-len, "# Tasks\n");
-    len += snprintf(buffer+len, template_size-len, "\n");
 
     *out = strndup(buffer, strlen(buffer));
 }
