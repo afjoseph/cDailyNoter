@@ -8,6 +8,7 @@
 
 #define EDITOR "/usr/bin/nvim"
 #define JOURNAL_DIR "journal"
+#define NOTES_DIR "/home/cheese/drive/notes/"
 #define NUM_OF_DAYS 3
 #define PATH_SIZE 512
 
@@ -32,11 +33,12 @@ main() {
     const int path_size = PATH_SIZE;
 
     // Get env variable
-    const char* notes_dir_path = getenv("NOTES_DIR");
-    if (notes_dir_path == NULL) {
-        perror("getenv");
-        exit(-1);
-    }
+    /*const char* notes_dir_path = getenv("NOTES_DIR");*/
+    /*if (notes_dir_path == NULL) {*/
+        /*perror("getenv");*/
+        /*exit(-1);*/
+    /*}*/
+    const char *notes_dir_path = NOTES_DIR;
 
     fetch_dates();
 
