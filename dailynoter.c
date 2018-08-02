@@ -46,11 +46,11 @@ main() {
     chdir(notes_dir_path);
 
     // Get file paths
-    file_paths = malloc(NUM_OF_DAYS * sizeof(char *));
+    file_paths = (char **) malloc(NUM_OF_DAYS * sizeof(char *));
     for (i = 0; i < NUM_OF_DAYS; i++) {
-        file_paths[i] = malloc(path_size * sizeof(char));
+        file_paths[i] = (char *)malloc(path_size * sizeof(char));
         snprintf(file_paths[i], path_size, 
-                "%s/%s/%s.md", notes_dir_path, JOURNAL_DIR, formatted_dates[i]);
+                "%s/%s/%s.rst", notes_dir_path, JOURNAL_DIR, formatted_dates[i]);
     }
 
     if (access(file_paths[0], F_OK) != -1) {
@@ -127,10 +127,10 @@ fetch_dates() {
     int i;
     struct tm *days[NUM_OF_DAYS];
 
-    formatted_dates = malloc(NUM_OF_DAYS * sizeof(char *));
+    formatted_dates = (char **)malloc(NUM_OF_DAYS * sizeof(char *));
 
     for (i = 0; i < NUM_OF_DAYS; i++) {
-        formatted_dates[i] = malloc(PATH_SIZE * sizeof(char));
+        formatted_dates[i] = (char *)malloc(PATH_SIZE * sizeof(char));
         time_t now = time(NULL);
         now = now - i * (24 * 60 * 60);
         days[i] = localtime(&now);
@@ -145,7 +145,7 @@ void
 fetch_template_data(char **out, const char *path) {
     int len = 0;
     const int template_size = 1000;
-    char *buffer = alloca(template_size);
+    char *buffer = (char *)alloca(template_size);
 
     len += snprintf(buffer+len, template_size-len, "%s\n", formatted_dates[0]);
     len += snprintf(buffer+len, template_size-len, "\n");
