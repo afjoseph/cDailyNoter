@@ -116,7 +116,7 @@ create_file(const char **paths) {
 
     fetch_template_data(&buffer, paths[0]);
 
-    fprintf(file, buffer);
+    fprintf(file, "%s", buffer);
     fclose(file);
 
     open_files(paths);
@@ -149,7 +149,12 @@ fetch_template_data(char **out, const char *path) {
 
     len += snprintf(buffer+len, template_size-len, "%s\n", formatted_dates[0]);
     len += snprintf(buffer+len, template_size-len, "\n");
-    len += snprintf(buffer+len, template_size-len, "# Tasks\n");
+    len += snprintf(buffer+len, template_size-len, "Tasks\n");
+    len += snprintf(buffer+len, template_size-len, "=====\n");
+    len += snprintf(buffer+len, template_size-len, "\n\n");
+    len += snprintf(buffer+len, template_size-len, "=============================\n\n");
+    len += snprintf(buffer+len, template_size-len, "Scratch\n");
+    len += snprintf(buffer+len, template_size-len, "=======\n");
 
     *out = strndup(buffer, strlen(buffer));
 }
