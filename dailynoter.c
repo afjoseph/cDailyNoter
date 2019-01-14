@@ -50,7 +50,7 @@ main() {
     for (i = 0; i < NUM_OF_DAYS; i++) {
         file_paths[i] = (char *)malloc(path_size * sizeof(char));
         snprintf(file_paths[i], path_size, 
-                "%s/%s/%s.rst", notes_dir_path, JOURNAL_DIR, formatted_dates[i]);
+                "%s/%s/%s.md", notes_dir_path, JOURNAL_DIR, formatted_dates[i]);
     }
 
     if (access(file_paths[0], F_OK) != -1) {
